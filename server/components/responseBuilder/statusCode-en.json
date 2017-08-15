@@ -1,0 +1,70 @@
+{
+  "default":{
+    "message": "Error! Error not specified",
+    "code": "4000"
+  },
+  "userNotFound": {
+    "message": "Authentication failed, user not found",
+    "code": "4010"
+  },
+  "invalidPassword": {
+    "message": "Authentication failed, invalid password",
+    "code": "4011"
+  },
+  "inactiveUser": {
+    "message": "Authentication failed, this user account is not activated yet. Please contact the administrator.",
+    "code": "4013"
+  },
+  "authenticationFailed": {
+    "message": "Authentication failed",
+    "code": "4012"
+  },
+  "emailCannotBeBlank": {
+    "message": "Email cannot be blank",
+    "code": "4220"
+  },
+  "passwordCannotBeBlank": {
+    "message": "Password cannot be blank",
+    "code": "4221"
+  },
+  "emailInUse": {
+    "message": "The specified email address is already in use.",
+    "code": "4222"
+  },
+  "itemNotFound": {
+    "message": "Item not found",
+    "code": "4041"
+  },
+  "itemsNotFound": {
+    "message": "No items found",
+    "code": "4042"
+  },
+  "instructionDuplicateKey": {
+    "message": "An instruction with the given name already exists in the database. Please choose a different name.",
+    "code": "4043"
+  },
+  "notAuthorized": {
+    "message": "User not authorized. Please re-login.",
+    "code": "4010"
+  },
+  "tokenExpired": {
+    "message": "Access token has expired. Please re-login.",
+    "code": "4011"
+  },
+  "forbiddenAccess": {
+    "message": "Access forbidden.",
+    "code": "4030"
+  },
+  "errorInInputParameters": {
+    "message": "Please check your input parameters",
+    "code": "5030"
+  },
+  "missionNotCreated": {
+    "message": "Mission Id not found. Please create the mission to add more operations to it. Do you want to save the mission?",
+    "code": "5031"
+  },
+  "userDuplicateKey": {
+    "message": "User email already exists in the database. Please choose a different email address.",
+    "code": "4047"
+  }
+}
