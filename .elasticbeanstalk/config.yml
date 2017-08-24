@@ -1,6 +1,6 @@
 branch-defaults:
   master:
-    environment: SiaLoungeassistantapp-env
+    environment: SIA-LoungeAssistantApp-dev
 environment-defaults:
   SiaLoungeassistantapp-env:
     branch: master
