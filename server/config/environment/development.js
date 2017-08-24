@@ -5,7 +5,7 @@
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://admin:password@ds129342.mlab.com:29342/trackmytools-dev'
+    uri: 'mongodb://user:password@ds153003.mlab.com:53003/sia-loungeassistant-dev'
   },
   seedDB: false,
   bot:{

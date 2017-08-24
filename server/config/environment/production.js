@@ -4,7 +4,7 @@
 // =================================
 module.exports = {
     mongo: {
-        uri: 'mongodb://admin:password@ds145780.mlab.com:45780/trackmytools-prod'
+        uri: 'mongodb://user:password@ds153003.mlab.com:53003/sia-loungeassistant'
     },
     bot:{
         appId: "3c230dca-076d-46e8-8357-f12127fc467f",
