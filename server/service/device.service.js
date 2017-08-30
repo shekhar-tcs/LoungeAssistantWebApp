@@ -7,6 +7,7 @@ var when = require('when');
 var deviceDao = require('../dao/device.dao');
 var locationReadingDao = require("./../dao/locationReading.dao")
 var triangulationService = require('../components/functions/triangulation.service');
+var deviceReadings = {};
 /**
  * Service Methods
  */
@@ -73,33 +74,47 @@ exports.deleteAllDevices = function () {
     return when(deviceDao.deleteAllDevicesPromise());
 };
 
+var calculateCoordinatesFromReading = function (locationReading, defer) {
+    var anchorDeviceThreeX = 0;
+    var anchorDeviceThreeY = -50;
+    //var anchorDeviceThreeDistance = 100;
+    var coordinates = triangulationService.getCoordinates(
+        locationReading.referenceAnchorOrigin.device.x,
+        locationReading.referenceAnchorOrigin.device.y,
+        locationReading.referenceAnchorOrigin.distance,
+        locationReading.referenceAnchor.device.x,
+        locationReading.referenceAnchor.device.y,
+        locationReading.referenceAnchor.distance,
+        anchorDeviceThreeX,
+        anchorDeviceThreeY,
+        1,
+        1);
+    if (!coordinates) {
+        return defer.err("Some error in populating the coordinates");
+    }
+    defer.resolve(coordinates);
+}
+
 exports.readLocation = function (deviceName) {
     var defer = when.defer();
-    locationReadingDao.findLocationReadingsByDeviceNamePromise(deviceName)
-        .then(function (locationReading) {
-            if (locationReading) {
-                var anchorDeviceThreeX = 0;
-                var anchorDeviceThreeY = -50;
-                var anchorDeviceThreeDistance = 100;
-                var coordinates = triangulationService.getCoordinates(
-                                                                   locationReading.referenceAnchorOrigin.device.x,
-                                                                   locationReading.referenceAnchorOrigin.device.y,
-                                                                   locationReading.referenceAnchorOrigin.distance,
-                                                                   locationReading.referenceAnchor.device.x,
-                                                                   locationReading.referenceAnchor.device.y,
-                                                                   locationReading.referenceAnchor.distance,
-                                                                   anchorDeviceThreeX,
-                                                                   anchorDeviceThreeY,
-                                                                   1,
-                                                                   1);
-                defer.resolve(coordinates);
+    if (deviceReadings.hasOwnProperty(deviceName)) {
+        setTimeout ( function() {
+            var locationReading = deviceReadings[deviceName];
+            calculateCoordinatesFromReading(locationReading, defer);
+        }, 0);
+    } else {
+        locationReadingDao.findLocationReadingsByDeviceNamePromise(deviceName)
+            .then(function (locationReading) {
+                if (locationReading) {
+                    calculateCoordinatesFromReading(locationReading, defer);
+                } else {
+                    defer.reject("No Reading found for " + deviceName);
+                }
+            }, function (err) {
+                defer.reject(err);
+            })
 
-            } else {
-                defer.reject("No Reading found for " + deviceName);
-            }
-        }, function (err) {
-            defer.reject(err);
-        })
+    }
     return defer.promise;
 }
 
@@ -112,14 +127,6 @@ var validateDevicesBeforeWriting = function(deviceId, result) {
     return deviceDao.checkIfDevicesExistsPromise(deviceArray);
 }
 
-var createLocationReading = function (locationReading, defer) {
-    locationReadingDao.createLocationReadingPromise(locationReading)
-        .then(function (savedReading) {
-            defer.resolve(savedReading);
-        }, function (err) {
-            defer.reject(err)
-        })
-}
 
 exports.writeLocationReference = function (deviceId, result) {
     var defer = when.defer();
@@ -159,17 +166,25 @@ exports.writeLocationReference = function (deviceId, result) {
                     distance: distanceAnchor
                 }
             }
+            deviceReadings[tagDevice.name] = locationReading;
             locationReadingDao.findLocationReadingsByDeviceNamePromise(tagDevice.name)
                 .then(function(previousReading) {
                     if (previousReading) {
-                        locationReadingDao.deleteLocationReadingsByDeviceNamePromise(tagDevice.name)
-                            .then(function () {
-                                createLocationReading(locationReading, defer);
+                        previousReading.referenceAnchorOrigin.distance = locationReading.referenceAnchorOrigin.distance;
+                        previousReading.referenceAnchor.distance = locationReading.referenceAnchor.distance;
+                        previousReading.save(function (err) {
+                            if (err) {
+                                return defer.reject(err);
+                            }
+                            return defer.resolve();
+                        });
+                    } else {
+                        locationReadingDao.createLocationReadingPromise(locationReading)
+                            .then(function (savedReading) {
+                                defer.resolve(savedReading);
                             }, function (err) {
                                 defer.reject(err)
                             })
-                    } else {
-                        createLocationReading(locationReading, defer);
                     }
                 })
         }, function (err) {

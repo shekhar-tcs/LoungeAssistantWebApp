@@ -184,15 +184,17 @@ exports.writeLocationReference = function (req, res) {
             count++;
         }
         if(count == 2) {
+            console.log(result);
             deviceService.writeLocationReference(deviceId, result)
                 .then(function (location) {
-                    return res.json(200, responseBuilder.successResponse(location, 'Location of ' + deviceId + ' is updated'));
+
                 }, function (err) {
                     if (err == 'itemNotFound') {
                         return handleItemNotFoundError(res, err, req.preferredLanguage);
                     }
                     return handleError(res, err, req.preferredLanguage);
                 });
+            return res.json(200, responseBuilder.successResponse({}, 'Location of ' + deviceId + ' is updated'));
         } else return handleError(res, 'errorInInputParameters');
 
     } else return handleError(res, 'errorInInputParameters');
