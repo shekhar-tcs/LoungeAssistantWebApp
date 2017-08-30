@@ -127,6 +127,30 @@ var validateDevicesBeforeWriting = function(deviceId, result) {
     return deviceDao.checkIfDevicesExistsPromise(deviceArray);
 }
 
+exports.updateInputError = function (deviceId) {
+    var defer = when.defer();
+
+    locationReadingDao.findLocationReadingsByDeviceNamePromise(deviceId)
+        .then(function(previousReading) {
+            if (previousReading) {
+                if (deviceReadings.hasOwnProperty(deviceId)) {
+                    var locationReading = deviceReadings[deviceId];
+                    locationReading.referenceAnchorOrigin.distance = 0;
+                    locationReading.referenceAnchor.distance = 0;
+                }
+                previousReading.referenceAnchorOrigin.distance = 0;
+                previousReading.referenceAnchor.distance = 0;
+                previousReading.save(function (err) {
+                    if (err) {
+                        return defer.reject(err);
+                    }
+                    return defer.resolve();
+                });
+            }
+        })
+
+    return defer.promise;
+}
 
 exports.writeLocationReference = function (deviceId, result) {
     var defer = when.defer();

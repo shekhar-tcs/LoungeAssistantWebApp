@@ -195,7 +195,18 @@ exports.writeLocationReference = function (req, res) {
                     return handleError(res, err, req.preferredLanguage);
                 });
             return res.json(200, responseBuilder.successResponse({}, 'Location of ' + deviceId + ' is updated'));
-        } else return handleError(res, 'errorInInputParameters');
+        } else {
+            deviceService.updateInputError(deviceId)
+                .then(function (location) {
+
+                }, function (err) {
+                    if (err == 'itemNotFound') {
+                        return handleItemNotFoundError(res, err, req.preferredLanguage);
+                    }
+                    return handleError(res, err, req.preferredLanguage);
+                });
+            return handleError(res, 'errorInInputParameters');
+        }
 
     } else return handleError(res, 'errorInInputParameters');
 };
