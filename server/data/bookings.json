@@ -1,0 +1,15 @@
+[
+  {
+    "flightBooking": {
+      "reference":"123456",
+      "origin":"Singapore - Changi",
+      "destination":"Paris CDG",
+      "date":"2017-09-04T06:55:40.35Z"
+    },
+    "passenger": {
+        "name":"John Appleseed",
+        "membershipType":"KrisFlyer Silver"
+    },
+    "id":"abcde"
+  }
+]

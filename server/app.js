@@ -23,6 +23,8 @@ var server = require('http').createServer(app);
 
 require('./config/express')(app);
 require('./routes')(app);
+var bot = require('./bot');
+app.post('/api/messages', bot.listen());
 
 try {
 // Start server
