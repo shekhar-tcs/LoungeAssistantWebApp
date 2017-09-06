@@ -1,0 +1,9 @@
+{
+  "default_scan_prompt": "Please scan the QR Code on your boarding pass to proceed.",
+  "booking_not_found": "Your booking doesn't exist in our system.",
+  "rescan_prompt": "Do you want to scan another boarding pass?",
+  "error_occurred": "An error has occurred: %s",
+  "yes":"Yes",
+  "cancel": "Cancel",
+  "go_back": "Go Back"
+}
