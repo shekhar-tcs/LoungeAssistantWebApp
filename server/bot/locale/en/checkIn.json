@@ -1,0 +1,5 @@
+{
+  "default_user_name": "User",
+  "scan_boarding_pass": "Please scan the QR Code on your boarding pass to proceed.",
+  "confirm_choice": "Great choice \"%s\"! Delivery on %s"
+}
