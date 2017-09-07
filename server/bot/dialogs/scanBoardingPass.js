@@ -28,7 +28,7 @@ lib.dialog('/', [
                     }
 
                     session.endDialogWithResult({
-                        qrcodeString: qrcodeString
+                        booking: booking
                     });
 
             }).catch(function (err) {
@@ -58,7 +58,7 @@ lib.dialog('/', [
             session.replaceDialog('/', { promptMessage: session.dialogData.promptMessage });
 
         } else if(results.response.entity == "cancel"){
-            session.endConversation("Thanks for talking to me! It was a joy serving you! Have a nice flight!");
+            session.endConversation("thanks_end_conversation");
         }  else {
 
             session.endConversation();

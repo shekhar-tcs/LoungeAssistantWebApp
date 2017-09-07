@@ -5,5 +5,6 @@
   "error_occurred": "An error has occurred: %s",
   "yes":"Yes",
   "cancel": "Cancel",
-  "go_back": "Go Back"
+  "go_back": "Go Back",
+  "thanks_end_conversation": "Thanks for talking to me! It was a joy serving you! Have a nice flight!"
 }

@@ -12,7 +12,9 @@ lib.dialog('/', [
     },
     function (session, args) {
         // Retrieve qrcodeString, continue to menu
-        session.userData.qrcodeString = args.qrcodeString;
+        //session.userData.qrcodeString = args.qrcodeString;
+        session.userData.booking = args.booking;
+        session.send()
         session.beginDialog('service-catalog:/');
     },
     function (session, args) {
