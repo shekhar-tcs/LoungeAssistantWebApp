@@ -28,7 +28,7 @@ var bot = new builder.UniversalBot(connector, function (session) {
         .subtitle('welcome_subtitle')
         .images([
             new builder.CardImage(session)
-                .url('http://sia-loungeassistant-images.imgix.net/krisflyer-loungeassistant.png')
+                .url('https://sia-loungeassistant-images.imgix.net/krisflyer-loungeassistant.png')
                 .alt('sia_lounge_assistant')
         ])
         .buttons([
