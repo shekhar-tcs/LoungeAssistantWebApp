@@ -7,6 +7,9 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD || config.bot.appPassword
 });
 
+console.log(config.bot.appId);
+console.log(config.bot.appPassword);
+
 // Welcome Dialog
 var mainOptions = {
     checkIn: 'main_options_check_in',
