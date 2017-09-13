@@ -1,6 +1,9 @@
 {
   "default_user_name": "User",
-  "scan_boarding_pass": "Please scan the QR Code on your boarding pass to proceed.",
-  "greet_user_after_checkin": "Welcome %s, you have a %s membership with us. \n You have 4 more hours for your flight. Make yourselves at home and enjoy the personalised services and a delectable selection of food and beverages, including iconic dishes from Singapore",
-  "confirm_choice": "Great choice \"%s\"! Delivery on %s"
+  "scan_boarding_pass": "Please scan the QR Code on your boarding pass.",
+  "welcome_user_after_checkin": "Hello **%s%s**, welcome aboard! \n You have a **%s** membership with us.",
+  "greet_user_after_checkin_cont":"You have 4 more hours for your flight. \n Make yourselves at home and enjoy the personalised services and a delectable selection of food and beverages, including iconic dishes from Singapore.",
+
+  "salutation_male": "Mr.",
+  "salutation_female": "Ms."
 }

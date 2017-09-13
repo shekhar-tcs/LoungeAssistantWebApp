@@ -1,44 +1,28 @@
 var builder = require('botbuilder');
 var siteUrl = require('./site-url');
 var config = require('../config/environment');
+var greetDialog = require('./dialogs/greet');
+var scanBoardingPassDialog = require('./dialogs/scanBoardingPass');
+var serviceCatalogDialog = require('./dialogs/service-catalog');
+var settingsDialog = require('./dialogs/settings');
+var helpDialog = require('./dialogs/help');
+var mainMenuDialog = require('./dialogs/main-menu');
+var checkInDialog = require('./dialogs/checkIn');
+var localizedRegexHelper = require('./dialogs/helpers/localizedRegex.helper');
 
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID || config.bot.appId,
     appPassword: process.env.MICROSOFT_APP_PASSWORD || config.bot.appPassword
 });
 
-console.log("Microsoft App id" + config.bot.appId);
-console.log("Microsoft App password" + config.bot.appPassword);
-
-// Welcome Dialog
-var mainOptions = {
-    checkIn: 'main_options_check_in',
-    support: 'main_options_talk_to_support'
-};
 
 var bot = new builder.UniversalBot(connector, function (session) {
-
-    if (localizedRegex(session, [mainOptions.checkIn]).test(session.message.text)) {
-        // Order Flowers
-        return session.beginDialog('checkIn:/');
-    }
-
-    var welcomeCard = new builder.HeroCard(session)
-        .title('welcome_title')
-        .subtitle('welcome_subtitle')
-        .images([
-            new builder.CardImage(session)
-                .url('https://sia-loungeassistant-images.imgix.net/krisflyer-loungeassistant.png')
-                .alt('sia_lounge_assistant')
-        ])
-        .buttons([
-            builder.CardAction.imBack(session, session.gettext(mainOptions.checkIn), mainOptions.checkIn),
-            builder.CardAction.imBack(session, session.gettext(mainOptions.support), mainOptions.support)
-        ]);
-
-    session.send(new builder.Message(session)
-        .addAttachment(welcomeCard));
+    handleRootDialogMessages(session);
 });
+
+// Add global LUIS recognizer to bot
+var luisAppUrl = process.env.LUIS_APP_URL || config.bot.luisEndpoint;
+bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
 
 // Enable Conversation Data persistence
 bot.set('persistConversationData', true);
@@ -49,18 +33,22 @@ bot.set('localizerSettings', {
     defaultLocale: 'en'
 });
 
+var handleRootDialogMessages = function (session) {
+    //Captures message in root dialog
+    if (mainMenuDialog.handleMainMenuOptions(session)) return;
+
+    // if not anything else "Greet" the user
+    greetDialog.greetUser(session, mainMenuDialog.menuOptions);
+}
+
 // Sub-Dialogs
-bot.library(require('./dialogs/checkIn').createLibrary());
-bot.library(require('./dialogs/scanBoardingPass').createLibrary());
-bot.library(require('./dialogs/service-catalog').createLibrary());
-//bot.library(require('./dialogs/shop').createLibrary());
-//bot.library(require('./dialogs/address').createLibrary());
-//bot.library(require('./dialogs/product-selection').createLibrary());
-//bot.library(require('./dialogs/delivery').createLibrary());
-//bot.library(require('./dialogs/details').createLibrary());
-//bot.library(require('./dialogs/checkout').createLibrary());
-bot.library(require('./dialogs/settings').createLibrary());
-bot.library(require('./dialogs/help').createLibrary());
+bot.library(mainMenuDialog.createLibrary());
+bot.library(checkInDialog.createLibrary());
+bot.library(greetDialog.createLibrary());
+bot.library(scanBoardingPassDialog.createLibrary());
+bot.library(serviceCatalogDialog.createLibrary());
+bot.library(settingsDialog.createLibrary());
+bot.library(helpDialog.createLibrary());
 
 // Validators
 bot.library(require('./validators').createLibrary());
@@ -68,17 +56,20 @@ bot.library(require('./validators').createLibrary());
 // Trigger secondary dialogs when 'settings' or 'support' is called
 bot.use({
     botbuilder: function (session, next) {
-        var text = session.message.text;
 
-        var settingsRegex = localizedRegex(session, ['main_options_settings']);
-        var supportRegex = localizedRegex(session, ['main_options_talk_to_support', 'help']);
+        //Captures message in root dialog
+        var message = session.message.text;
 
-        if (settingsRegex.test(text)) {
-            // interrupt and trigger 'settings' dialog 
+        var settingsRegex = localizedRegexHelper.getRegex(session, ['main_options_settings']);
+        if (settingsRegex.test(message)) {
+            // Trigger 'settings' dialog
             return session.beginDialog('settings:/');
-        } else if (supportRegex.test(text)) {
-            // interrupt and trigger 'help' dialog
-            return session.beginDialog('help:/');
+        }
+
+        var supportRegex = localizedRegexHelper.getRegex(session, ['main_options_talk_to_support', 'help']);
+        if (supportRegex.test(message)) {
+            // Trigger 'help' dialog
+            return session.replaceDialog('help:/');
         }
 
         // continue normal flow
@@ -97,20 +88,17 @@ bot.on('conversationUpdate', function (message) {
     }
 });
 
-// Cache of localized regex to match selection from main options
-var LocalizedRegexCache = {};
-function localizedRegex(session, localeKeys) {
-    var locale = session.preferredLocale();
-    var cacheKey = locale + ":" + localeKeys.join('|');
-    if (LocalizedRegexCache.hasOwnProperty(cacheKey)) {
-        return LocalizedRegexCache[cacheKey];
+bot.dialog('goBack', [
+    function (session, args, next) {
+        // Resolve and store any Note.Title entity passed from LUIS.
+        session.endDialog();
     }
+]).triggerAction({
+    matches: 'Utilities.Goback'
+});
 
-    var localizedStrings = localeKeys.map(function (key) { return session.localizer.gettext(locale, key); });
-    var regex = new RegExp('^(' + localizedStrings.join('|') + ')', 'i');
-    LocalizedRegexCache[cacheKey] = regex;
-    return regex;
-}
+
+
 
 // Connector listener wrapper to capture site url
 var connectorListener = connector.listen();

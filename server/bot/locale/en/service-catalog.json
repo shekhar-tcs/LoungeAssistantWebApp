@@ -6,5 +6,6 @@
   "choose_category": "Please select a category:",
   "choose_bouquet_from_category": "Please select a bouquet for \"%s\" category:",
   "view_bouquets": "View bouquets",
-  "choose_this": "Select"
+  "choose_this": "Select",
+  "prompt_choices": "Please choose from the following service options:"
 }
