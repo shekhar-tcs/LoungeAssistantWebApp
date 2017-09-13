@@ -8,7 +8,9 @@
     },
     "passenger": {
         "name":"John Appleseed",
-        "membershipType":"KrisFlyer Silver"
+        "membershipType":"KrisFlyer Silver",
+        "passportNumber":"E4856108",
+        "gender":"Male"
     },
     "id":"abcde"
   }

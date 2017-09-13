@@ -1,8 +1,9 @@
 {
   "default_scan_prompt": "Please scan the QR Code on your boarding pass to proceed.",
-  "booking_not_found": "Your booking doesn't exist in our system.",
-  "rescan_prompt": "Do you want to scan another boarding pass?",
+  "booking_not_found": "Sorry, you don't seem to have a valid booking with us.",
+  "rescan_prompt": "Do you want to retry?",
   "error_occurred": "An error has occurred: %s",
+  "please_wait_processing": "Please wait while we process your request.",
   "yes":"Yes",
   "cancel": "Cancel",
   "go_back": "Go Back",

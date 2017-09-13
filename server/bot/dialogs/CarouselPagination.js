@@ -86,14 +86,16 @@ module.exports = {
                     .attachments(cards);
                 session.send(message);
 
-                // more items link
-                if (pageResult.totalCount > pageNumber * settings.pageSize) {
-                    var moreCard = new builder.HeroCard(session)
-                        .title(settings.showMoreTitle)
-                        .buttons([
-                            builder.CardAction.imBack(session, session.gettext(settings.showMoreValue), settings.showMoreValue)
-                        ]);
-                    session.send(new builder.Message(session).addAttachment(moreCard));
+                if (settings.hasOwnProperty("showMoreValue")) {
+                    // more items link
+                    if (pageResult.totalCount > pageNumber * settings.pageSize) {
+                        var moreCard = new builder.HeroCard(session)
+                            .title(settings.showMoreTitle)
+                            .buttons([
+                                builder.CardAction.imBack(session, session.gettext(settings.showMoreValue), settings.showMoreValue)
+                            ]);
+                        session.send(new builder.Message(session).addAttachment(moreCard));
+                    }
                 }
             });
         };
