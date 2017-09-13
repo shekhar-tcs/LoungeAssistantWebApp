@@ -18,6 +18,7 @@ lib.dialog('/', [
     },
     function (session, results) {
         if (results.response) {
+            session.send('please_wait_processing');
             // Return scanned qrcode string to previous dialog in stack
             var qrcodeString = results.response;
             // Retrieve order and create ReceiptCard
@@ -58,11 +59,10 @@ lib.dialog('/', [
             session.replaceDialog('/', { promptMessage: session.dialogData.promptMessage });
 
         } else if(results.response.entity == "cancel"){
-            session.endConversation("thanks_end_conversation");
+
+            session.endDialog("thanks_end_conversation");
         }  else {
-
-            session.endConversation();
-
+            session.endDialog();
         }
     }]);
 

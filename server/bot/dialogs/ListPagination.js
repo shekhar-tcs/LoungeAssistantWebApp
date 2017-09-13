@@ -25,9 +25,12 @@ module.exports = {
         }
 
         // map item info into HeroCard
+
         var asCard = function (session, cardInfo) {
+            var title;
+            if (settings.showTitle) title = cardInfo.title;
             var card = new builder.HeroCard()
-                .title(cardInfo.title)
+                .title(title)
                 .buttons([
                     new builder.CardAction()
                         .type('imBack')
@@ -86,15 +89,18 @@ module.exports = {
                     .attachments(cards);
                 session.send(message);
 
-                // more items link
-                if (pageResult.totalCount > pageNumber * settings.pageSize) {
-                    var moreCard = new builder.HeroCard(session)
-                        .title(settings.showMoreTitle)
-                        .buttons([
-                            builder.CardAction.imBack(session, session.gettext(settings.showMoreValue), settings.showMoreValue)
-                        ]);
-                    session.send(new builder.Message(session).addAttachment(moreCard));
+                if (settings.hasOwnProperty("showMoreValue")) {
+                    // more items link
+                    if (pageResult.totalCount > pageNumber * settings.pageSize) {
+                        var moreCard = new builder.HeroCard(session)
+                            .title(settings.showMoreTitle)
+                            .buttons([
+                                builder.CardAction.imBack(session, session.gettext(settings.showMoreValue), settings.showMoreValue)
+                            ]);
+                        session.send(new builder.Message(session).addAttachment(moreCard));
+                    }
                 }
+
             });
         };
     }

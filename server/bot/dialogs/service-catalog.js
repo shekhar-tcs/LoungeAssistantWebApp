@@ -1,15 +1,21 @@
 var _ = require('lodash');
 var builder = require('botbuilder');
-var products = require('../../service/products.service');
+var serviceCatalog = require('../../service/serviceCatalog.service');
 var SimpleWaterfallDialog = require('./SimpleWaterfallDialog');
 var ListPagination = require('./ListPagination');
 
-var carouselOptions = {
-    showMoreTitle: 'title_show_more',
-    showMoreValue: 'show_more',
+var categoryOptions = {
     selectTemplate: 'select',
-    pageSize: 5,
-    unknownOption: 'unknown_option'
+    pageSize: 10,
+    unknownOption: 'unknown_option',
+    showTitle: false
+};
+
+var productOptions = {
+    selectTemplate: 'select',
+    pageSize: 10,
+    unknownOption: 'unknown_option',
+    showTitle: true
 };
 
 var lib = new builder.Library('service-catalog');
@@ -20,28 +26,34 @@ lib.dialog('/',
     new SimpleWaterfallDialog([
         // First message
         function (session, args, next) {
-            session.send('choose_category');
+            session.send('prompt_choices');
             next();
         },
         // Show Categories
-        ListPagination.create(products.getCategories, products.getCategory, categoryMapping, carouselOptions),
+        ListPagination.create(serviceCatalog.getCategories, serviceCatalog.getCategory, categoryMapping, categoryOptions),
         // Category selected
         function (session, args, next) {
             var category = args.selected;
-            session.send('choose_bouquet_from_category', category.name);
             session.dialogData.category = category;
-            session.message.text = null;            // remove message so next step does not take it as input
-            next();
+            if (category.name == "Guide me to my place") {
+                session.endDialog(session.dialogData.category.response.message);
+            } else {
+                session.send(session.dialogData.category.response.message);
+                session.message.text = null;            // remove message so next step does not take it as input
+                next();
+            }
+
         },
-        // Show Products
+        // Show products
         function (session, args, next) {
-            var categoryName = session.dialogData.category.name;
+            var category = session.dialogData.category;
             ListPagination.create(
-                function (pageNumber, pageSize) { return products.getProducts(categoryName, pageNumber, pageSize); },
-                products.getProduct,
+                function (pageNumber, pageSize) { return serviceCatalog.getProducts(category.name, pageNumber, pageSize); },
+                serviceCatalog.getProduct,
                 productMapping,
-                carouselOptions
+                productOptions
             )(session, args, next);
+
         },
         // Product selected
         function (session, args, next) {
@@ -53,16 +65,16 @@ lib.dialog('/',
 function categoryMapping(category) {
     return {
         title: category.name,
+        //category:category,
         imageUrl: category.imageUrl,
-        buttonLabel: 'view_bouquets'
+        buttonLabel: category.title
     };
 }
 
 function productMapping(product) {
     return {
         title: product.name,
-        subtitle: '$ ' + product.price.toFixed(2),
-        imageUrl: product.imageUrl,
+        imageUrl: product.image,
         buttonLabel: 'choose_this'
     };
 }
