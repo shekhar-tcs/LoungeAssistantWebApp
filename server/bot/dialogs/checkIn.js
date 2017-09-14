@@ -6,11 +6,13 @@ var lib = new builder.Library('checkIn');
 lib.dialog('/', [
     function (session) {
         // Ask to scan the QR code using 'scanBoardingPass' library
-        session.send("Sure");
-        session.beginDialog('scanBoardingPass:/',
-            {
-                promptMessage: session.gettext('scan_boarding_pass')
-            });
+        session.send("Sure!");
+        setTimeout(function () {
+            session.beginDialog('scanBoardingPass:/',
+                {
+                    promptMessage: session.gettext('scan_boarding_pass')
+                });
+        }, 1000);
     },
     function (session, args) {
         if (args.booking) {
