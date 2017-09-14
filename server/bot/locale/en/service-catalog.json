@@ -7,5 +7,6 @@
   "choose_bouquet_from_category": "Please select a bouquet for \"%s\" category:",
   "view_bouquets": "View bouquets",
   "choose_this": "Select",
-  "prompt_choices": "Please choose from the following service options:"
+  "prompt_choices": "Please choose from the following service options:",
+  "confirm_choice": "Thanks! Your order has been placed. Great choice \"%s\"! We will serve it in jiffy. Sit tight and enjoy your time!"
 }

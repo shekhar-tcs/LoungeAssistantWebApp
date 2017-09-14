@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var Promise = require('bluebird');
 var allCategories = require('../data/service-categories.json');
-
+var allProducts = require('../data/service-products.json');
 
 // var catalogService = {
 //     // Categories

@@ -29,11 +29,28 @@ lib.dialog('/', [
         } else {
             session.endDialog();
         }
+    },
+    function (session, args) {
+        session.endDialog();
 
     }
 ]).triggerAction({
     matches: 'Dialog.LoungeCheckIn'
 });
+
+lib.dialog('afterProductSelection', [
+    function (session) {
+        // Ask to scan the QR code using 'scanBoardingPass' library
+        session.send("Sure! Seems like you have not authenticated yourselves.");
+        session.beginDialog('scanBoardingPass:/',
+            {
+                promptMessage: session.gettext('scan_boarding_pass')
+            });
+    },
+    function (session, args) {
+        session.endDialog("Thanks for authenticating!");
+    }
+]);
 
 var postCheckInWelcomeMessagePromise = function (session, passenger) {
     var defer = when.defer();

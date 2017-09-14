@@ -58,7 +58,24 @@ lib.dialog('/',
         // Product selected
         function (session, args, next) {
             // this is last step, calling next with args will end in session.endDialogWithResult(args)
-            next({ selection: args.selected });
+            session.userData.activeServiceSelection = args.selected;
+            if (!session.userData.currentUser) {
+                session.beginDialog('checkIn:afterProductSelection')
+            } else {
+                session.send('confirm_choice', session.userData.activeServiceSelection.name);
+                session.endDialog();
+            }
+
+            //next({ selection: args.selected });
+        },
+        function (session, args, next) {
+            // this is last step, calling next with args will end in session.endDialogWithResult(args)
+
+            session.send('confirm_choice', session.userData.activeServiceSelection.name);
+            session.userData.activeServiceSelection = null;
+            session.endDialog();
+
+            //next({ selection: args.selected });
         }
     ]));
 
