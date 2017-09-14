@@ -62,7 +62,7 @@ lib.dialog('/',
             var category = session.dialogData.category;
             if (category.name == "Guide me to my place" && session.userData.currentUser) {
 
-                var salutation = session.userData.currentUser.gender === "Male" ? "salutation_male" : "salutation_female";
+                var salutation = session.userData.currentUser.gender === "Male" ? "Mr." : "Ms.";
                 session.endDialog(session.dialogData.category.response.message, salutation, session.userData.currentUser.name);
                 session.userData.currentUser = null;
                 return session.userData.activeServiceSelection = null;
