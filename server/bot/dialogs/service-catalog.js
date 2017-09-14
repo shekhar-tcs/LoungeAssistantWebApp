@@ -46,8 +46,8 @@ lib.dialog('/',
                         session.beginDialog('checkIn:afterProductSelection')
                     }, 1000);
                 } else {
-                    var salutation = session.userData.currentUser.gender === "Male" ? "salutation_male" : "salutation_female";
-                    session.endDialog(session.dialogData.category.response.message, session.gettext(salutation), session.userData.currentUser.name);
+                    var salutation = session.userData.currentUser.gender === "Male" ? "Mr." : "Ms.";
+                    session.endDialog(session.dialogData.category.response.message, salutation, session.userData.currentUser.name);
                     session.userData.currentUser = null;
                     session.userData.activeServiceSelection = null;
                 }
