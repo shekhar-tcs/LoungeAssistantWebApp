@@ -42,13 +42,23 @@ lib.dialog('afterProductSelection', [
     function (session) {
         // Ask to scan the QR code using 'scanBoardingPass' library
         session.send("Sure! Seems like you have not authenticated yourselves.");
-        session.beginDialog('scanBoardingPass:/',
-            {
-                promptMessage: session.gettext('scan_boarding_pass')
-            });
+        setTimeout(function () {
+            session.beginDialog('scanBoardingPass:/',
+                {
+                    promptMessage: session.gettext('scan_boarding_pass')
+                });
+        }, 1000);
+
     },
     function (session, args) {
-        session.endDialog("Thanks for authenticating!");
+        if (args.booking) {
+            session.userData.currentUser = args.booking.passenger;
+            if (!session.userData.users) session.userData.users = {};
+            session.userData.users[args.booking.passenger.passportNumber] = args.booking.passenger;
+            session.endDialog("Thanks for authenticating!");
+        } else {
+            session.endDialog();
+        }
     }
 ]);
 
