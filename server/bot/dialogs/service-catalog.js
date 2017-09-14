@@ -33,10 +33,24 @@ lib.dialog('/',
         ListPagination.create(serviceCatalog.getCategories, serviceCatalog.getCategory, categoryMapping, categoryOptions),
         // Category selected
         function (session, args, next) {
+
+            if(args.childId == "checkIn:afterProductSelection") {
+                return next();
+            }
+
             var category = args.selected;
             session.dialogData.category = category;
             if (category.name == "Guide me to my place") {
-                session.endDialog(session.dialogData.category.response.message);
+                if (!session.userData.currentUser) {
+                    setTimeout(function () {
+                        session.beginDialog('checkIn:afterProductSelection')
+                    }, 1000);
+                } else {
+                    var salutation = session.userData.currentUser.gender === "Male" ? "salutation_male" : "salutation_female";
+                    session.endDialog(session.dialogData.category.response.message, session.gettext(salutation), session.userData.currentUser.name);
+                    session.userData.currentUser = null;
+                    session.userData.activeServiceSelection = null;
+                }
             } else {
                 session.send(session.dialogData.category.response.message);
                 session.message.text = null;            // remove message so next step does not take it as input
@@ -44,9 +58,16 @@ lib.dialog('/',
             }
 
         },
-        // Show products
         function (session, args, next) {
             var category = session.dialogData.category;
+            if (category.name == "Guide me to my place" && session.userData.currentUser) {
+
+                var salutation = session.userData.currentUser.gender === "Male" ? "salutation_male" : "salutation_female";
+                session.endDialog(session.dialogData.category.response.message, salutation, session.userData.currentUser.name);
+                session.userData.currentUser = null;
+                return session.userData.activeServiceSelection = null;
+            }
+            // Show products
             ListPagination.create(
                 function (pageNumber, pageSize) { return serviceCatalog.getProducts(category.name, pageNumber, pageSize); },
                 serviceCatalog.getProduct,
@@ -57,6 +78,9 @@ lib.dialog('/',
         },
         // Product selected
         function (session, args, next) {
+            if(args.childId == "checkIn:afterProductSelection") {
+                return next();
+            }
             // this is last step, calling next with args will end in session.endDialogWithResult(args)
             session.userData["activeServiceSelection"] = args.selected;
             if (!session.userData.currentUser) {
@@ -67,6 +91,8 @@ lib.dialog('/',
             } else {
                 setTimeout(function () {
                     session.send('confirm_choice', session.userData.activeServiceSelection.name);
+                    session.userData.currentUser = null;
+                    session.userData.activeServiceSelection = null;
                     session.endDialog();
                 }, 1000);
             }
@@ -77,6 +103,7 @@ lib.dialog('/',
             // this is last step, calling next with args will end in session.endDialogWithResult(args)
 
             session.send('confirm_choice', session.userData.activeServiceSelection.name);
+            session.userData.currentUser = null;
             session.userData.activeServiceSelection = null;
             session.endDialog();
 

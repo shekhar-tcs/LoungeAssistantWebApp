@@ -3,7 +3,7 @@
     "title": "Guide me to my place",
     "name": "Guide me to my place",
     "response": {
-      "message": "Please follow me.."
+      "message": "Please follow me ***%s%s***"
     }
   },
   {
