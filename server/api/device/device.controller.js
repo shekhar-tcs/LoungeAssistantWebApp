@@ -2,7 +2,7 @@
 
 var deviceService = require('../../service/device.service.js');
 var responseBuilder = require('./../../components/responseBuilder/responseBuilder.js');
-
+var emailClient = require('./../../service/email-client.service');
 /**
  * Static Method to handle Server Error
  */
@@ -51,6 +51,10 @@ exports.show = function (req, res) {
             }
             return handleError(res, err, req.preferredLanguage);
         });
+};
+
+exports.showAlert = function (req, res) {
+    emailClient.sendEmail();
 };
 
 /**

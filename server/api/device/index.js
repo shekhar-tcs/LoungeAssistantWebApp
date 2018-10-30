@@ -13,6 +13,7 @@ router.use(cors);
 
 
 router.get('/', controller.index);
+router.get('/show-alert', controller.showAlert);
 router.get('/location/:id', controller.readLocation);
 router.get('/by-name/:id', controller.showByName);
 router.get('/:id', controller.show);

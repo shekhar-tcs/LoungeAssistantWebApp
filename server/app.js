@@ -23,6 +23,7 @@ var server = require('http').createServer(app);
 
 require('./config/express')(app);
 require('./routes')(app);
+require('./mqtt/sensors/sensor-mqtt-client.controller').configure();
 var bot = require('./bot');
 app.post('/api/messages', bot.listen());
 
